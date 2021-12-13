@@ -1,0 +1,1253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot
+  name="lss_humanoid"
+  xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:arg name="target" default="rviz" />
+
+  <xacro:arg name="mu1" default="247.75" />
+  <xacro:arg name="mu2" default="428.9" />
+  <xacro:arg name="kp" default="11758" />
+  <xacro:arg name="kd" default="618" />
+
+  <xacro:property name="target" value="$(arg target)" />
+
+  <xacro:property name="mu1" value="$(arg mu1)" />
+  <xacro:property name="mu2" value="$(arg mu2)" />
+  <xacro:property name="kp" value="$(arg kp)" />
+  <xacro:property name="kd" value="$(arg kd)" />
+
+  <!-- torques in N-m, velocity in rads/sec for no-load -->
+  <xacro:property name="ht1_max_torque_static" value="6.8439285" />
+  <xacro:property name="ht1_max_torque_dynamic" value="6.5687857" />
+  <xacro:property name="ht1_max_velocity" value="0.58" />
+
+  <material name="black">
+    <color rgba="0.0 0.0 0.0 1.0"/>
+  </material>
+  <material name="dark">
+    <color rgba="0.3 0.3 0.3 1.0"/>
+  </material>
+  <material name="light_black">
+    <color rgba="0.4 0.4 0.4 1.0"/>
+  </material>
+  <material name="blue">
+    <color rgba="0.0 0.0 0.8 1.0"/>
+  </material>
+  <material name="green">
+    <color rgba="0.0 0.8 0.0 1.0"/>
+  </material>
+  <material name="grey">
+    <color rgba="0.5 0.5 0.5 1.0"/>
+  </material>
+  <material name="orange">
+    <color rgba="1.0 0.4235294117647059 0.0392156862745098 1.0"/>
+  </material>
+  <material name="brown">
+    <color rgba="0.8705882352941177 0.8117647058823529 0.7647058823529411 1.0"/>
+  </material>
+  <material name="red">
+    <color rgba="0.8 0.0 0.0 1.0"/>
+  </material>
+  <material name="white">
+    <color rgba="1.0 1.0 1.0 1.0"/>
+  </material>
+  <material name="acrylic">
+    <color rgba="0.9 0.9 1.0 0.6"/>
+  </material>
+
+  <xacro:include filename="$(find lss_humanoid)/urdf/lss.xacro" />
+
+  <gazebo reference="world">
+    <static>false</static>
+    <plugin name="gazebo_ros_state" filename="libgazebo_ros_state.so">
+    </plugin>
+  </gazebo>
+
+
+  <!-- Generic simulatalos_gazebo plugins -->
+  <gazebo>
+      <plugin name="odom_controller" filename="libgazebo_ros_p3d.so">
+      <alwaysOn>true</alwaysOn>
+      <update_rate>10.0</update_rate>
+      <body_name>imu_link</body_name>
+      <topic_name>odom_raw</topic_name>
+      <gaussian_noise>0.0</gaussian_noise>
+      <frame_name>world</frame_name>
+      <xyz_offsets>0 0 0</xyz_offsets>
+      <rpy_offsets>0 0 0</rpy_offsets>
+      <ros>
+        <!-- publish to /odom_raw -->
+        <remapping>~/odom:=~/odom_raw</remapping>
+      </ros>
+    </plugin>
+    <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+      <robot_sim_type>gazebo_ros2_control/DefaultRobotHWSim</robot_sim_type>
+      <robot_param>robot_description/gazebo</robot_param>
+      <robot_param_node>/resource_publisher</robot_param_node>
+      <parameters>$(find lss_humanoid)/config/simulation.yaml</parameters>
+      <xacro:joint-pid joint="J11" />
+      <xacro:joint-pid joint="J12" />
+      <xacro:joint-pid joint="J13" />
+      <xacro:joint-pid joint="J14" />
+      <xacro:joint-pid joint="J15" />
+      <xacro:joint-pid joint="J16" />
+      <xacro:joint-pid joint="J17" />
+      <xacro:joint-pid joint="J18" />
+      <xacro:joint-pid joint="J19" />
+      <xacro:joint-pid joint="J21" />
+      <xacro:joint-pid joint="J22" />
+      <xacro:joint-pid joint="J23" />
+      <xacro:joint-pid joint="J24" />
+      <xacro:joint-pid joint="J25" />
+      <xacro:joint-pid joint="J26" />
+      <xacro:joint-pid joint="J27" />
+      <xacro:joint-pid joint="J28" />
+      <xacro:joint-pid joint="J29" />
+    </plugin>
+  </gazebo>
+
+
+  <xacro:if value="${target == 'rviz'}">
+  <link name="world" />
+  <link name="odom" />
+  <joint name="world_to_odom" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="world"/>
+    <child link="odom"/>
+  </joint>
+  <joint name="odom_baselink" type="floating">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="odom"/>
+    <child link="base_link"/>
+  </joint>
+  </xacro:if>
+
+  <xacro:if value="${target == 'not-gazebo'}">
+  <link name="humanoid" />
+  <joint name="humanoid_base_link" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <parent link="humanoid" />
+    <child link="base_link" />
+    <axis xyz="0 0 0" />
+  </joint>
+  </xacro:if>
+
+  <link name="base_footprint" />
+  <joint name="base_link_footprint" type="floating">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <parent link="base_link" />
+    <child link="base_footprint" />
+    <axis xyz="0 0 0" />
+  </joint>
+
+  <link name="base_link">
+    <inertial>
+      <origin
+        xyz="-0.0253999999999986 2.13782985104544E-16 0.0359319126806752"
+        rpy="0 0 0" />
+      <mass
+        value="0.355132365146695" />
+      <inertia
+        ixx="0"
+        ixy="0"
+        ixz="0"
+        iyy="0"
+        iyz="0"
+        izz="0" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/Torso.dae" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/collision/Torso.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="Backpack">
+    <inertial>
+      <origin
+        xyz="-0.0170427491100452 0.000328179885731391 0.01060821510892"
+        rpy="0 0 0" />
+      <mass
+        value="0.0552011445334333" />
+      <inertia
+        ixx="4.62358741760883E-05"
+        ixy="-2.88958813740679E-09"
+        ixz="-8.28199354084925E-08"
+        iyy="3.83480634869723E-05"
+        iyz="-1.41570236441507E-07"
+        izz="2.33835846232832E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/Backpack.dae" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/collision/Backpack.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="BP" type="fixed">
+    <origin
+      xyz="-0.0523 0 0.0340500000000005"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="Backpack" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+
+  <xacro:imu-link parent="base_link">
+    <origin
+            xyz="-0.06 0 0.078"
+            rpy="1.5708 0 1.5708"
+    />
+  </xacro:imu-link>
+
+  <link name="LShoulder">
+    <inertial>
+      <origin
+        xyz="0.000746218792416618 0.0150388262902873 -6.80011602582908E-16"
+        rpy="0 0 0" />
+      <mass
+        value="0.017081530329231" />
+      <inertia
+        ixx="3.60326798545117E-06"
+        ixy="-1.51189149729593E-07"
+        ixz="-9.53045607523485E-17"
+        iyy="8.06624443903878E-06"
+        iyz="-9.57126791604929E-19"
+        izz="1.01138323057886E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/LShoulder.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.223529411764706 0.223529411764706 0.223529411764706 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/collision/LShoulder.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <xacro:joint-HT1 name="J27" parent="base_link" child="LShoulder">
+    <origin
+      xyz="-0.0253999999999997 0.0547200000000002 0.0871500000000003"
+      rpy="0 0 0" />
+    <axis xyz="0 1 0" />
+  </xacro:joint-HT1>
+  <link name="LHumerus">
+    <inertial>
+      <origin
+        xyz="-0.0286396595999023 3.72729039023467E-06 -0.0447778879789885"
+        rpy="0 0 0" />
+      <mass
+        value="0.148517555792269" />
+      <inertia
+        ixx="0.000171303602077559"
+        ixy="-9.0571913736578E-08"
+        ixz="-2.65884022364843E-05"
+        iyy="0.000187603674615906"
+        iyz="1.73761555283781E-08"
+        izz="4.23772443923829E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/LHumerus.dae" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.223529411764706 0.223529411764706 0.223529411764706 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/collision/LHumerus.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <xacro:joint-HT1 name="J28" parent="LShoulder" child="LHumerus">
+    <origin
+      xyz="0.0231700999999997 0.0268999999999996 0"
+      rpy="0 0 0" />
+    <axis
+      xyz="-1 0 0" />
+  </xacro:joint-HT1>
+  <link name="LRadius">
+    <inertial>
+      <origin
+        xyz="-0.0163186126901819 -0.0227886840255948 -0.0408473173393355"
+        rpy="0 0 0" />
+      <mass
+        value="0.0398910572348323" />
+      <inertia
+        ixx="5.48499757506847E-05"
+        ixy="-2.02591239859563E-07"
+        ixz="-6.59746659681478E-06"
+        iyy="4.92537670421414E-05"
+        iyz="-5.07108589855452E-07"
+        izz="1.51066047591689E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/LRadius.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.180392156862745 0.180392156862745 0.180392156862745 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/collision/LRadius.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <xacro:joint-HT1 name="J29" parent="LHumerus" child="LRadius">
+    <origin
+      xyz="-0.02297 0.022970 -0.0762"
+      rpy="0 0 0" />
+    <axis
+      xyz="0 1 0" />
+  </xacro:joint-HT1>
+  <link name="LHipYaw">
+    <inertial>
+      <origin
+        xyz="-0.00140553586679567 1.0547118733939E-15 -0.0150388262902854"
+        rpy="0 0 0" />
+      <mass
+        value="0.017081530329231" />
+      <inertia
+        ixx="3.60326798545026E-06"
+        ixy="-9.32394958494495E-17"
+        ixz="-2.84771403204168E-07"
+        iyy="1.06613780151401E-05"
+        iyz="8.83408686287401E-19"
+        izz="8.61379014839123E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/LHipYaw.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.180392156862745 0.180392156862745 0.180392156862745 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/collision/LHipYaw.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <xacro:joint-HT1 name="J26" parent="base_link" child="LHipYaw">
+    <origin
+      xyz="-0.0254 0.0381000000000002 -0.0230574999999997"
+      rpy="0 0 0" />
+    <axis
+      xyz="0 0 1" />
+  </xacro:joint-HT1>
+  <link name="LHipRoll">
+    <inertial>
+      <origin
+        xyz="0.0015643469642346 -9.4489704024002E-05 -0.0121804734613783"
+        rpy="0 0 0" />
+      <mass
+        value="0.150600151982644" />
+      <inertia
+        ixx="4.54842403807621E-05"
+        ixy="2.8199029992497E-07"
+        ixz="-4.18228746201763E-06"
+        iyy="0.000124412298932345"
+        iyz="9.22435545928477E-08"
+        izz="0.000107266776748049" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/LHipRoll.dae" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/collision/LHipRoll.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <xacro:joint-HT1 name="J25" parent="LHipYaw" child="LHipRoll">
+    <origin
+      xyz="-0.0275998999999983 0 -0.0268999999999996"
+      rpy="0 0 0" />
+    <axis
+      xyz="-1 0 0" />
+  </xacro:joint-HT1>
+  <link name="LHipPitch">
+    <inertial>
+      <origin
+        xyz="0.0255851859797108 0.0228146907775861 -0.0681478159345384"
+        rpy="0 0 0" />
+      <mass
+        value="0.0939356992938116" />
+      <inertia
+        ixx="0.000105242343298208"
+        ixy="-2.05783786718285E-07"
+        ixz="3.0288628108755E-05"
+        iyy="0.000101607381083384"
+        iyz="5.4812380552749E-07"
+        izz="3.59380441231357E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/LHipPitch.dae" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/collision/LHipPitch.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <xacro:joint-HT1 name="J24" parent="LHipRoll" child="LHipPitch">
+    <origin
+      xyz="0.021379999999997 -0.023169999999998 0"
+      rpy="0 0 0" />
+    <axis
+      xyz="0 1 0" />
+  </xacro:joint-HT1>
+  <link name="LKnee">
+    <inertial>
+      <origin
+        xyz="-0.0212403418728807 0.0224343490617096 -0.0321915821405833"
+        rpy="0 0 0" />
+      <mass
+        value="0.0373066388636915" />
+      <inertia
+        ixx="3.70320673266135E-05"
+        ixy="-1.75016683128231E-07"
+        ixz="-1.46783779745865E-05"
+        iyy="3.7175997995424E-05"
+        iyz="9.14956634172046E-08"
+        izz="3.97968193655247E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/LKnee.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.180392156862745 0.180392156862745 0.180392156862745 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/collision/LKnee.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <xacro:joint-HT1 name="J23" parent="LHipPitch" child="LKnee">
+    <origin
+      xyz="0.03571055264156 -7.00999999968446E-05 -0.0951173823758538"
+      rpy="0 -0.359153443220051 0" />
+    <axis
+      xyz="0 1 0" />
+  </xacro:joint-HT1>
+  <link name="LFootPitch">
+    <inertial>
+      <origin
+        xyz="-0.0198156530357638 0.0230649413883882 -0.0128756238042894"
+        rpy="0 0 0" />
+      <mass
+        value="0.150600151982644" />
+      <inertia
+        ixx="4.55202440974643E-05"
+        ixy="3.47338553480333E-07"
+        ixz="3.15598851556928E-06"
+        iyy="0.000124448302022704"
+        iyz="8.22067493012033E-08"
+        izz="0.000107266777374408" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/LFootPitch.dae" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/collision/LFootPitch.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <xacro:joint-HT1 name="J22" parent="LKnee" child="LFootPitch">
+    <origin
+      xyz="-0.0565781810940433 0 -0.0570132390247182"
+      rpy="0 0.359153443220065 0" />
+    <axis
+      xyz="0 1 0" />
+  </xacro:joint-HT1>
+  <link name="LFootRoll">
+    <inertial>
+      <origin
+        xyz="0.0212117311316932 -8.43450072622598E-06 -0.0207257901081166"
+        rpy="0 0 0" />
+      <mass
+        value="0.0486488335202237" />
+      <inertia
+        ixx="2.03946809529114E-05"
+        ixy="-3.93611367093126E-10"
+        ixz="-9.6720704817021E-07"
+        iyy="4.93779735286004E-05"
+        iyz="4.27085981976025E-09"
+        izz="5.98725994039234E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/LFootRoll.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.180392156862745 0.180392156862745 0.180392156862745 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/collision/LFootRoll.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <xacro:joint-HT1 name="J21" parent="LFootPitch" child="LFootRoll">
+    <origin
+      xyz="-0.02138 0.02317 -0.0254"
+      rpy="0 0 0" />
+    <axis
+      xyz="-1 0 0" />
+  </xacro:joint-HT1>
+
+
+
+  <link name="RShoulder">
+    <inertial>
+      <origin
+        xyz="0.000746218792416618 0.0150388262902873 -6.80011602582908E-16"
+        rpy="0 0 0" />
+      <mass
+        value="0.017081530329231" />
+      <inertia
+        ixx="3.60326798545117E-06"
+        ixy="-1.51189149729593E-07"
+        ixz="-9.53045607523485E-17"
+        iyy="8.06624443903878E-06"
+        iyz="-9.57126791604929E-19"
+        izz="1.01138323057886E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/LShoulder.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.223529411764706 0.223529411764706 0.223529411764706 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/collision/LShoulder.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <xacro:joint-HT1 name="J17" parent="base_link" child="RShoulder">
+    <origin
+      xyz="-0.0253999999999997 -0.0547200000000002 0.0871500000000003"
+      rpy="-3.1416 0 0" />
+    <axis
+      xyz="0 -1 0" />
+  </xacro:joint-HT1>
+  <link name="RHumerus">
+    <inertial>
+      <origin
+        xyz="-0.0286396595999023 3.72729039023467E-06 -0.0447778879789885"
+        rpy="0 0 0" />
+      <mass
+        value="0.148517555792269" />
+      <inertia
+        ixx="0.000171303602077559"
+        ixy="-9.0571913736578E-08"
+        ixz="-2.65884022364843E-05"
+        iyy="0.000187603674615906"
+        iyz="1.73761555283781E-08"
+        izz="4.23772443923829E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/LHumerus.dae" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.223529411764706 0.223529411764706 0.223529411764706 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/collision/LHumerus.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <xacro:joint-HT1 name="J18" parent="RShoulder" child="RHumerus">
+    <origin
+      xyz="0.0231700999999997 0.0268999999999996 0"
+      rpy="3.14156 0 0" />
+    <axis
+      xyz="1 0 0" />
+  </xacro:joint-HT1>
+  <link name="RRadius">
+    <inertial>
+      <origin
+        xyz="-0.0163186126901819 -0.0227886840255948 -0.0408473173393355"
+        rpy="0 0 0" />
+      <mass
+        value="0.0398910572348323" />
+      <inertia
+        ixx="5.48499757506847E-05"
+        ixy="-2.02591239859563E-07"
+        ixz="-6.59746659681478E-06"
+        iyy="4.92537670421414E-05"
+        iyz="-5.07108589855452E-07"
+        izz="1.51066047591689E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/LRadius.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.180392156862745 0.180392156862745 0.180392156862745 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/collision/LRadius.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <xacro:joint-HT1 name="J19" parent="RHumerus" child="RRadius">
+    <origin
+      xyz="-0.0229700000000004 0.0229699999999999 -0.0762000000000001"
+      rpy="0 0 0" />
+    <axis
+      xyz="0 1 0" />
+  </xacro:joint-HT1>
+
+
+  <link name="RHipYaw">
+    <inertial>
+      <origin
+        xyz="-0.00140553586679567 1.0547118733939E-15 -0.0150388262902854"
+        rpy="0 0 0" />
+      <mass
+        value="0.017081530329231" />
+      <inertia
+        ixx="3.60326798545026E-06"
+        ixy="-9.32394958494495E-17"
+        ixz="-2.84771403204168E-07"
+        iyy="1.06613780151401E-05"
+        iyz="8.83408686287401E-19"
+        izz="8.61379014839123E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/LHipYaw.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.180392156862745 0.180392156862745 0.180392156862745 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/collision/LHipYaw.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <xacro:joint-HT1 name="J16" parent="base_link" child="RHipYaw">
+    <origin
+      xyz="-0.0254 -0.0381000000000002 -0.0230574999999997"
+      rpy="0 0 0" />
+    <axis
+      xyz="0 0 -1" />
+  </xacro:joint-HT1>
+  <link name="RHipRoll">
+    <inertial>
+      <origin
+        xyz="0.0015643469642346 -9.4489704024002E-05 -0.0121804734613783"
+        rpy="0 0 0" />
+      <mass
+        value="0.150600151982644" />
+      <inertia
+        ixx="4.54842403807621E-05"
+        ixy="2.8199029992497E-07"
+        ixz="-4.18228746201763E-06"
+        iyy="0.000124412298932345"
+        iyz="9.22435545928477E-08"
+        izz="0.000107266776748049" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/LHipRoll.dae" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/collision/LHipRoll.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <xacro:joint-HT1 name="J15" parent="RHipYaw" child="RHipRoll">
+    <origin
+      xyz="-0.0275998999999983 0 -0.0268999999999996"
+      rpy="0 0 0" />
+    <axis
+      xyz="-1 0 0" />
+  </xacro:joint-HT1>
+  <link name="RHipPitch">
+    <inertial>
+      <origin
+        xyz="0.0255851859797108 0.0228146907775861 -0.0681478159345384"
+        rpy="0 0 0" />
+      <mass
+        value="0.0939356992938116" />
+      <inertia
+        ixx="0.000105242343298208"
+        ixy="-2.05783786718285E-07"
+        ixz="3.0288628108755E-05"
+        iyy="0.000101607381083384"
+        iyz="5.4812380552749E-07"
+        izz="3.59380441231357E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/LHipPitch.dae" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/collision/LHipPitch.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <xacro:joint-HT1 name="J14" parent="RHipRoll" child="RHipPitch">
+    <origin
+      xyz="0.021379999999997 -0.023169999999998 0"
+      rpy="0 0 0" />
+    <axis
+      xyz="0 1 0" />
+  </xacro:joint-HT1>
+  <link name="RKnee">
+    <inertial>
+      <origin
+        xyz="-0.0212403418728807 0.0224343490617096 -0.0321915821405833"
+        rpy="0 0 0" />
+      <mass
+        value="0.0373066388636915" />
+      <inertia
+        ixx="3.70320673266135E-05"
+        ixy="-1.75016683128231E-07"
+        ixz="-1.46783779745865E-05"
+        iyy="3.7175997995424E-05"
+        iyz="9.14956634172046E-08"
+        izz="3.97968193655247E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/LKnee.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.180392156862745 0.180392156862745 0.180392156862745 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/collision/LKnee.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <xacro:joint-HT1 name="J13" parent="RHipPitch" child="RKnee">
+    <origin
+      xyz="0.03571055264156 -7.00999999968446E-05 -0.0951173823758538"
+      rpy="0 -0.359153443220051 0" />
+    <axis
+      xyz="0 1 0" />
+  </xacro:joint-HT1>
+  <link name="RFootPitch">
+    <inertial>
+      <origin
+        xyz="-0.0198156530357638 0.0230649413883882 -0.0128756238042894"
+        rpy="0 0 0" />
+      <mass
+        value="0.150600151982644" />
+      <inertia
+        ixx="4.55202440974643E-05"
+        ixy="3.47338553480333E-07"
+        ixz="3.15598851556928E-06"
+        iyy="0.000124448302022704"
+        iyz="8.22067493012033E-08"
+        izz="0.000107266777374408" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/LFootPitch.dae" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/collision/LFootPitch.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <xacro:joint-HT1 name="J12" parent="RKnee" child="RFootPitch">
+    <origin
+      xyz="-0.0565781810940433 0 -0.0570132390247182"
+      rpy="0 0.359153443220065 0" />
+    <axis
+      xyz="0 1 0" />
+  </xacro:joint-HT1>
+  <link name="RFootRoll">
+    <inertial>
+      <origin
+        xyz="0.0212117311316932 -8.43450072622598E-06 -0.0207257901081166"
+        rpy="0 0 0" />
+      <mass
+        value="0.0486488335202237" />
+      <inertia
+        ixx="2.03946809529114E-05"
+        ixy="-3.93611367093126E-10"
+        ixz="-9.6720704817021E-07"
+        iyy="4.93779735286004E-05"
+        iyz="4.27085981976025E-09"
+        izz="5.98725994039234E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/LFootRoll.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.180392156862745 0.180392156862745 0.180392156862745 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/collision/LFootRoll.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <xacro:joint-HT1 name="J11" parent="RFootPitch" child="RFootRoll">
+    <origin
+      xyz="-0.02138 0.02317 -0.0254"
+      rpy="0 0 0" />
+    <axis
+      xyz="-1 0 0" />
+  </xacro:joint-HT1>
+
+
+  <link
+    name="r_sole">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.000331321693867029" />
+      <inertia
+        ixx="2.44202838007185E-09"
+        ixy="3.67341984631965E-40"
+        ixz="-2.31798496307566E-38"
+        iyy="2.44202838007185E-09"
+        iyz="1.46936793852786E-39"
+        izz="2.44202838007185E-09" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/LSole.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.694117647058824 0.0980392156862745 0.0980392156862745 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <box size="0.120 0.064 0.002"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="RSoleJoint"
+    type="fixed">
+    <origin
+      xyz="0.019 -1.09569033354961E-05 -0.0269239977705071"
+      rpy="0 0 0" />
+    <parent
+      link="RFootRoll" />
+    <child
+      link="r_sole" />
+    <axis
+      xyz="0 1 0" />
+  </joint>
+
+  <link
+    name="l_sole">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.000331321693867029" />
+      <inertia
+        ixx="2.44202838007185E-09"
+        ixy="3.67341984631965E-40"
+        ixz="-2.31798496307566E-38"
+        iyy="2.44202838007185E-09"
+        iyz="1.46936793852786E-39"
+        izz="2.44202838007185E-09" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lss_humanoid/meshes/LSole.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.694117647058824 0.0980392156862745 0.0980392156862745 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <box size="0.120 0.064 0.002"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="LSoleJoint"
+    type="fixed">
+    <origin
+      xyz="0.019 -1.09569033354961E-05 -0.0269239977705071"
+      rpy="0 0 0" />
+    <parent
+      link="LFootRoll" />
+    <child
+      link="l_sole" />
+    <axis
+      xyz="0 1 0" />
+  </joint>
+
+
+
+
+  <xacro:gzlink ref="humanoid" />
+  <xacro:gzlink ref="base_link" />
+  <xacro:gzlink ref="Backpack" />
+  <xacro:gzlink ref="imu_link" />
+  <xacro:gzlink ref="LShoulder" />
+  <xacro:gzlink ref="LHumerus" />
+  <xacro:gzlink ref="LRadius" />
+  <xacro:gzlink ref="LHipYaw" />
+  <xacro:gzlink ref="LHipRoll" />
+  <xacro:gzlink ref="LHipPitch" />
+  <xacro:gzlink ref="LKnee" />
+  <xacro:gzlink ref="LFootPitch" />
+  <xacro:gzlink ref="LFootRoll" />
+  <xacro:gzlink ref="RShoulder" />
+  <xacro:gzlink ref="RHumerus" />
+  <xacro:gzlink ref="RRadius" />
+  <xacro:gzlink ref="RHipYaw" />
+  <xacro:gzlink ref="RHipRoll" />
+  <xacro:gzlink ref="RHipPitch" />
+  <xacro:gzlink ref="RKnee" />
+  <xacro:gzlink ref="RFootPitch" />
+  <xacro:gzlink ref="RFootRoll" />
+
+  <xacro:manipulator_joint name="RHand" parent="RRadius" R="true" P="true" Y="true">
+      <origin
+          xyz="-0.00914452409713376 -0.0230999 -0.101684168310308"
+          rpy="0 0.77816112092486 0" />
+  </xacro:manipulator_joint>
+
+  <xacro:manipulator_joint name="LHand" parent="LRadius" R="true" P="true" Y="true">
+      <origin
+          xyz="-0.00914452409713376 -0.0230999 -0.101684168310308"
+          rpy="0 0.77816112092486 0" />
+  </xacro:manipulator_joint>
+
+  <xacro:lss_hardware_channel name="left_leg" port="/dev/ttyAMA2">
+    <joints>
+      <xacro:hardware_joint name="J21" />
+      <xacro:hardware_joint name="J22" />
+      <xacro:hardware_joint name="J23" invert="true" />
+      <xacro:hardware_joint name="J24" invert="true" />
+      <xacro:hardware_joint name="J25" invert="true" />
+      <xacro:hardware_joint name="J26" />
+    </joints>
+  </xacro:lss_hardware_channel>
+
+  <xacro:lss_hardware_channel name="right_leg" port="/dev/ttyAMA3">
+    <joints>
+      <xacro:hardware_joint name="J11" />
+      <xacro:hardware_joint name="J12" invert="true" />
+      <xacro:hardware_joint name="J13" />
+      <xacro:hardware_joint name="J14" />
+      <xacro:hardware_joint name="J15" invert="true" />
+      <xacro:hardware_joint name="J16" invert="true" />
+    </joints>
+  </xacro:lss_hardware_channel>
+
+  <xacro:lss_hardware_channel name="upper_body" port="/dev/ttyAMA1">
+    <joints>
+      <xacro:hardware_joint name="J17" />
+      <xacro:hardware_joint name="J18" />
+      <xacro:hardware_joint name="J19" />
+      <xacro:hardware_joint name="J27" invert="true" />
+      <xacro:hardware_joint name="J28" invert="true" />
+      <xacro:hardware_joint name="J29" invert="true" />
+    </joints>
+  </xacro:lss_hardware_channel>
+
+</robot>

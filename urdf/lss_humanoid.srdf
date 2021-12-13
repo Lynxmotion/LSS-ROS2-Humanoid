@@ -1,0 +1,194 @@
+<?xml version="1.0" ?>
+<robot name="lss_humanoid">
+
+	<group name="r_leg">
+        <joint name="J16" />
+        <joint name="J15" />
+        <joint name="J14" />
+        <joint name="J13" />
+        <joint name="J12" />
+        <joint name="J11" />
+        <chain base_link="base_link" tip_link="r_sole" />
+    </group>
+	<group name="l_leg">
+        <joint name="J26" />
+        <joint name="J25" />
+        <joint name="J24" />
+        <joint name="J23" />
+        <joint name="J22" />
+        <joint name="J21" />
+        <chain base_link="base_link" tip_link="l_sole" />
+    </group>
+
+	<group name="r_arm">
+        <joint name="J17" />
+        <joint name="J18" />
+        <joint name="J19" />
+        <chain base_link="base_link" tip_link="RRadius" />
+    </group>
+	<group name="l_arm">
+        <joint name="J27" />
+        <joint name="J28" />
+        <joint name="J29" />
+        <chain base_link="base_link" tip_link="LRadius" />
+    </group>
+    <group name="all">
+        <group name="l_arm" />
+        <group name="r_arm" />
+        <group name="l_leg" />
+        <group name="r_leg" />
+    </group>
+    <group name="all_legs">
+        <group name="l_leg" />
+        <group name="r_leg" />
+    </group>
+    <group name="all_arms">
+        <group name="l_arm" />
+        <group name="r_arm" />
+    </group>
+
+    <end_effector name="r_foot" parent_link="r_sole" group="r_leg" />
+    <end_effector name="l_foot" parent_link="l_sole" group="l_leg" />
+    <end_effector name="r_hand" parent_link="RHand" group="r_arm" />
+    <end_effector name="l_hand" parent_link="LHand" group="l_arm" />
+
+    <rotor_params>
+        <joint name="J11" mass="1.0" gear_ratio="1.0" />
+        <joint name="J12" mass="1.0" gear_ratio="1.0" />
+        <joint name="J13" mass="1.0" gear_ratio="1.0" />
+        <joint name="J14" mass="1.0" gear_ratio="1.0" />
+        <joint name="J15" mass="1.0" gear_ratio="1.0" />
+        <joint name="J16" mass="1.0" gear_ratio="1.0" />
+        <joint name="J17" mass="1.0" gear_ratio="1.0" />
+        <joint name="J18" mass="1.0" gear_ratio="1.0" />
+        <joint name="J19" mass="1.0" gear_ratio="1.0" />
+
+
+        <joint name="J21" mass="1.0" gear_ratio="1.0" />
+        <joint name="J22" mass="1.0" gear_ratio="1.0" />
+        <joint name="J23" mass="1.0" gear_ratio="1.0" />
+        <joint name="J24" mass="1.0" gear_ratio="1.0" />
+        <joint name="J25" mass="1.0" gear_ratio="1.0" />
+        <joint name="J26" mass="1.0" gear_ratio="1.0" />
+        <joint name="J27" mass="1.0" gear_ratio="1.0" />
+        <joint name="J28" mass="1.0" gear_ratio="1.0" />
+        <joint name="J29" mass="1.0" gear_ratio="1.0" />
+    </rotor_params>
+
+    <!--
+           foot height = y axis
+           foot width  = x axis
+           foot depth  = z axis
+    -->
+    <specificities>
+        <feet>
+            <right>
+                <size height="0.120" width="0.064" depth="0.028" />
+                <anklePosition x="0.0" y="0.0" z="0.028" />
+            </right>
+            <left>
+                <size height="0.120" width="0.064" depth="0.028" />
+                <anklePosition x="0.0" y="0.0" z="0.028" />
+            </left>
+        </feet>
+    </specificities>
+
+    <disable_collisions link1="base_link" link2="LShoulder" reason="Adjacent" />
+    <disable_collisions link1="LShoulder" link2="LHumerus" reason="Adjacent" />
+    <disable_collisions link1="LHumerus" link2="LRadius" reason="Adjacent" />
+
+    <disable_collisions link1="base_link" link2="RShoulder" reason="Adjacent" />
+    <disable_collisions link1="RShoulder" link2="RHumerus" reason="Adjacent" />
+    <disable_collisions link1="RHumerus" link2="RRadius" reason="Adjacent" />
+
+    <disable_collisions link1="base_link" link2="LHipYaw" reason="Adjacent" />
+    <disable_collisions link1="LHipYaw" link2="LHipRoll" reason="Adjacent" />
+    <disable_collisions link1="LHipRoll" link2="LHipPitch" reason="Adjacent" />
+    <disable_collisions link1="LHipYaw" link2="LHipPitch" reason="Adjacent" />
+    <disable_collisions link1="LHipPitch" link2="LKnee" reason="Adjacent" />
+    <disable_collisions link1="LKnee" link2="LFootPitch" reason="Adjacent" />
+    <disable_collisions link1="LFootPitch" link2="l_sole" reason="Adjacent" />
+    <disable_collisions link1="LKnee" link2="l_sole" reason="Adjacent" />
+
+    <disable_collisions link1="base_link" link2="RHipYaw" reason="Adjacent" />
+    <disable_collisions link1="RHipYaw" link2="RHipRoll" reason="Adjacent" />
+    <disable_collisions link1="RHipRoll" link2="RHipPitch" reason="Adjacent" />
+    <disable_collisions link1="RHipYaw" link2="RHipPitch" reason="Adjacent" />
+    <disable_collisions link1="RHipPitch" link2="RKnee" reason="Adjacent" />
+    <disable_collisions link1="RKnee" link2="RFootPitch" reason="Adjacent" />
+    <disable_collisions link1="RFootPitch" link2="r_sole" reason="Adjacent" />
+    <disable_collisions link1="RKnee" link2="r_sole" reason="Adjacent" />
+
+    <group_state group="all" name="half_sitting2">
+        <joint name="root_link" value="0 0 0.28 0. 0. 0. 1." />
+        <joint name="J16" value="6.29183" />
+        <joint name="J15" value="0.0670152" />
+        <joint name="J14" value="0.0205191" />
+        <joint name="J13" value="-0.145655" />
+        <joint name="J12" value="0.0" />
+        <joint name="J11" value="-0.0917954" />
+        <joint name="J17" value="0.0488693" />
+        <joint name="J18" value="-0.162316" />
+        <joint name="J19" value="-0.148353" />
+        <joint name="J26" value="0.00681908" />
+        <joint name="J25" value="-0.0528541" />
+        <joint name="J24" value="0.0179377" />
+        <joint name="J23" value="-0.139304" />
+        <joint name="J22" value="0.0" />
+        <joint name="J21" value="0.0290474" />
+        <joint name="J27" value="-0.0139627" />
+        <joint name="J28" value="-0.111701" />
+        <joint name="J29" value="-0.171043" />
+    </group_state>
+
+    <group_state group="all" name="half_sitting">
+        <joint name="root_link" value="-0.00736397 0.024427 0.26467 0.0526387 0.0438274 -0.766691 0.638352" />
+        <joint name="J16" value="6.28652" />
+        <joint name="J15" value="0.0241011" />
+        <joint name="J14" value="-0.18122" />
+        <joint name="J13" value="0.0278257" />
+        <joint name="J12" value="0.0163127" />
+        <joint name="J11" value="-0.0253183" />
+        <joint name="J17" value="0.0488693" />
+        <joint name="J18" value="-0.162316" />
+        <joint name="J19" value="-0.148353" />
+        <joint name="J26" value="0.00260275" />
+        <joint name="J25" value="-0.0191732" />
+        <joint name="J24" value="-0.179288" />
+        <joint name="J23" value="0.0292038" />
+        <joint name="J22" value="0.0122741" />
+        <joint name="J21" value="0.0187654" />
+        <joint name="J27" value="-0.0139627" />
+        <joint name="J28" value="-0.111701" />
+        <joint name="J29" value="-0.171043" />
+    </group_state>
+
+    <group_state group="all" name="kneeling">
+        <joint name="root_joint" value="-0.0109762 0.0166856 0.155374 0.000761663 0.0193164 -0.679149 0.733746" />
+        <joint name="J16" value="-0.00872665" />
+        <joint name="J15" value="-0.0663225" />
+        <joint name="J14" value="-0.55676" />
+        <joint name="J13" value="1.80118" />
+        <joint name="J12" value="-1.26885" />
+        <joint name="J11" value="0.0471239" />
+        <joint name="J17" value="-0.00872665" />
+        <joint name="J18" value="0.0383972" />
+        <joint name="J19" value="-0.69115" />
+        <joint name="RRadius_roll" value="0" />
+        <joint name="RHand_roll_pitch" value="0" />
+        <joint name="RHand_pitch_yaw" value="0" />
+        <joint name="J26" value="0.0122173" />
+        <joint name="J25" value="0.0471239" />
+        <joint name="J24" value="-0.544543" />
+        <joint name="J23" value="1.82387" />
+        <joint name="J22" value="-1.29329" />
+        <joint name="J21" value="-0.0628319" />
+        <joint name="J27" value="-0" />
+        <joint name="J28" value="0.0436332" />
+        <joint name="J29" value="-0.694641" />
+        <joint name="LRadius_roll" value="0" />
+        <joint name="LHand_roll_pitch" value="0" />
+        <joint name="LHand_pitch_yaw" value="0" />
+    </group_state>
+</robot>
+

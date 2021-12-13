@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="utf-8"?>
+<lss xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:property name="ros2_controls" value="true" />
+
+    <!-- torques in N-m, velocity in rads/sec for no-load -->
+    <xacro:property name="ht1_max_torque_static" value="6.8439285" />
+    <xacro:property name="ht1_max_torque_dynamic" value="6.5687857" />
+    <xacro:property name="ht1_max_velocity" value="0.58" />
+
+    <!--
+          todo: need to update these values to real ones
+    -->
+    <!-- torques in N-m, velocity in rads/sec for no-load -->
+    <xacro:property name="st1_max_torque_static" value="6.8439285" />
+    <xacro:property name="st1_max_torque_dynamic" value="6.5687857" />
+    <xacro:property name="st1_max_velocity" value="0.58" />
+
+    <!-- torques in N-m, velocity in rads/sec for no-load -->
+    <xacro:property name="hs1_max_torque_static" value="6.8439285" />
+    <xacro:property name="hs1_max_torque_dynamic" value="6.5687857" />
+    <xacro:property name="hs1_max_velocity" value="0.58" />
+
+    <xacro:macro name="limits-HT1" params="lower_limit=-3.14 upper_limit=3.14">
+        <limit
+                lower="${lower_limit}"
+                upper="${upper_limit}"
+                effort="${ht1_max_torque_static}"
+                velocity="${ht1_max_velocity}" />
+        <safety_controller
+                k_position="0.3"
+                k_velocity="100"
+                soft_lower_limit="-3.1"
+                soft_upper_limit="3.1" />
+        <dynamics
+                damping="0.01"
+                friction="9E-05" />
+    </xacro:macro>
+
+    <xacro:macro name="limits-ST1" params="lower_limit=-3.14 upper_limit=3.14">
+        <limit
+                lower="${lower_limit}"
+                upper="${upper_limit}"
+                effort="${st1_max_torque_static}"
+                velocity="${st1_max_velocity}" />
+        <safety_controller
+                k_position="0.3"
+                k_velocity="100"
+                soft_lower_limit="-3.1"
+                soft_upper_limit="3.1" />
+        <dynamics
+                damping="0.01"
+                friction="9E-05" />
+    </xacro:macro>
+
+    <xacro:macro name="limits-HS1" params="lower_limit=-3.14 upper_limit=3.14">
+        <limit
+                lower="${lower_limit}"
+                upper="${upper_limit}"
+                effort="${hs1_max_torque_static}"
+                velocity="${hs1_max_velocity}" />
+        <safety_controller
+                k_position="0.3"
+                k_velocity="100"
+                soft_lower_limit="-3.1"
+                soft_upper_limit="3.1" />
+        <dynamics
+                damping="0.01"
+                friction="9E-05" />
+    </xacro:macro>
+
+    <xacro:macro name="lss_hardware_channel" params="name port **joints">
+        <ros2_control name="${name}" type="system">
+            <hardware>
+                <plugin>lynxmotion/LynxmotionServoHardware</plugin>
+                <param name="name">${name}</param>
+                <param name="port">${port}</param>
+                <param name="baudrate">500000</param>
+                <param name="prefix">J</param>
+            </hardware>
+            <xacro:insert_block name="joints" />
+        </ros2_control>
+    </xacro:macro>
+
+    <xacro:macro name="hardware_joint" params="name invert:=false">
+    <joint name="${name}">
+        <command_interface name="position">
+            <param name="min">-1800</param>
+            <param name="max">1800</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="effort"/>
+        <state_interface name="current"/>
+	<param name="invert">${invert}</param>
+    </joint>
+    </xacro:macro>
+
+    <xacro:macro name="transmission-ST1" params="ref">
+        <xacro:if value="${ros2_controls}">
+            <transmission name="${ref}T">
+                <type>transmission_interface/SimpleTransmission</type>
+                <joint name="${ref}">
+                    <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+                </joint>
+                <actuator name="${ref}M">
+                    <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+                    <mechanicalReduction>1</mechanicalReduction>
+                </actuator>
+            </transmission>
+        </xacro:if>
+    </xacro:macro>
+
+    <xacro:macro name="joint-pid" params="joint P:=100.0 I:=10.0 D:=5.0">
+        <parameter name="${joint}.p" type="double">${P}</parameter>
+        <parameter name="${joint}.i" type="double">${I}</parameter>
+        <parameter name="${joint}.d" type="double">${D}</parameter>
+        <parameter name="${joint}.i_clamp_max" type="double">3.0</parameter>
+        <parameter name="${joint}.i_clamp_min" type="double">-3.0</parameter>
+        <parameter name="${joint}.antiwindup" type="bool">false</parameter>
+    </xacro:macro>
+
+    <xacro:macro name="gzjoint" params="ref preserve:=0">
+        <gazebo reference="${ref}">
+            <xacro:if value="${preserve}">
+                <preserveFixedJoint>true</preserveFixedJoint>
+            </xacro:if>
+            <implicitSpringDamper>true</implicitSpringDamper>
+            <springStiffness>100</springStiffness>
+            <springReference>0.01</springReference>
+
+            <!-- untuned parameters -->
+            <!--stopCfm>0.2</stopCfm>
+            <stopErp>0.2</stopErp-->
+            <!--provideFeedback>true</provideFeedback-->
+        </gazebo>
+    </xacro:macro>
+
+    <xacro:macro name="gzlink" params="ref">
+        <gazebo reference="${ref}">
+            <mu1>${mu1}</mu1>
+            <mu2>${mu2}</mu2>
+            <kp>${kp}</kp>
+            <kd>${kd}</kd>
+            <dampingFactor>0.02</dampingFactor>
+        </gazebo>
+    </xacro:macro>
+
+    <xacro:macro
+        name="joint-HT1"
+        params="name parent child min_position:=-3.14 max_position:=3.14 *origin *axis"
+    >
+        <joint name="${name}" type="revolute">
+            <xacro:insert_block name="origin" />
+            <xacro:insert_block name="axis" />
+            <parent link="${parent}" />
+            <child link="${child}" />
+            <xacro:limits-HT1 lower_limit="${min_position}" upper_limit="${max_position}" />
+        </joint>
+        <xacro:transmission-ST1 ref="${name}" />
+        <xacro:gzjoint ref="${name}" />
+    </xacro:macro>
+
+    <xacro:macro
+            name="joint-HS1"
+            params="name parent child min_position:=-3.14 max_position:=3.14 *origin *axis"
+    >
+        <joint name="${name}" type="revolute">
+            <xacro:insert_block name="origin" />
+            <xacro:insert_block name="axis" />
+            <parent link="${parent}" />
+            <child link="${child}" />
+            <xacro:limits-HS1 lower_limit="${min_position}" upper_limit="${max_position}" />
+        </joint>
+        <xacro:transmission-ST1 ref="${name}" />
+        <xacro:gzjoint ref="${name}" />
+    </xacro:macro>
+
+    <xacro:macro
+            name="joint-ST1"
+            params="name parent child min_position:=-3.14 max_position:=3.14 *origin *axis"
+    >
+        <joint name="${name}" type="revolute">
+            <xacro:insert_block name="origin" />
+            <xacro:insert_block name="axis" />
+            <parent link="${parent}" />
+            <child link="${child}" />
+            <xacro:limits-ST1 lower_limit="${min_position}" upper_limit="${max_position}" />
+        </joint>
+        <xacro:transmission-ST1 ref="${name}" />
+        <xacro:gzjoint ref="${name}" />
+    </xacro:macro>
+
+
+    <xacro:macro
+        name="ST1"
+        params="name parent child offset=0 reverse=false mirror=false *origin"
+        >
+        <xacro:property name="mirror_rot" value="${0 if not mirror else 3.14158}" />
+        <xacro:property name="mirror_trx" value="${0 if not mirror else -0.038}" />
+
+        <!-- fixed joint to parent link -->
+        <xacro:if value="${not reverse}">
+            <joint name="${name}-fixed" type="fixed">
+                <parent link="${parent}" />
+                <child link="${name}-ST1" />
+                <xacro:insert_block name="origin" />
+            </joint>
+        </xacro:if>
+        <xacro:if value="${reverse}">
+            <xacro:joint-ST1
+                    name="${name}"
+                    parent="${parent}"
+                    child="${name}-ST1"
+            >
+                <xacro:insert_block name="origin" />
+                <axis   xyz="1 0 0" />
+            </xacro:joint-ST1>
+        </xacro:if>
+        <!-- servo visual link -->
+        <link name="${name}-ST1">
+            <inertial>
+                <origin
+                        xyz="0 0 0"
+                        rpy="0 0 0" />
+                <mass
+                        value="0.355132365146695" />
+                <inertia
+                        ixx="0"
+                        ixy="0"
+                        ixz="0"
+                        iyy="0"
+                        iyz="0"
+                        izz="0" />
+            </inertial>
+            <visual>
+                <xacro:if value="${not reverse}">
+                <origin
+                        xyz="${mirror_trx} 0 0"
+                        rpy="0 ${mirror_rot} 0" />
+                </xacro:if>
+                <xacro:if value="${reverse}">
+                    <origin
+                            xyz="${mirror_trx} 0.0255 0"
+                            rpy="3.14159 ${mirror_rot} 0" />
+                </xacro:if>
+                <geometry>
+                    <mesh filename="package://lss_hexapod/meshes/LSS-Servo-Aluminum.dae" />
+                </geometry>
+                <material name="white" />
+            </visual>
+            <collision>
+                <origin
+                        xyz="0 0 0"
+                        rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="package://lss_hexapod/meshes/LSS-Servo-Aluminum.dae" />
+                </geometry>
+            </collision>
+        </link>
+        <!-- LSS servo joint to child link -->
+        <xacro:if value="${reverse}">
+            <joint name="${name}-fixed" type="fixed">
+                <parent link="${name}-ST1" />
+                <child link="${child}" />
+                <origin xyz="-0.019 0.0255 0"
+                        rpy="0 0 1.57078" />
+            </joint>
+        </xacro:if>
+        <xacro:if value="${not reverse}">
+            <xacro:joint-ST1
+                    name="${name}"
+                    parent="${name}-ST1"
+                    child="${child}"
+            >
+                <origin xyz="-0.019 0.0255 0"
+                        rpy="0 ${offset} 1.57078" />
+                <axis   xyz="0 1 0" />
+            </xacro:joint-ST1>
+        </xacro:if>
+    </xacro:macro>
+
+
+
+    <xacro:macro
+        name="imu-link"
+        params="parent:='base_link' *origin"
+        >
+        <joint name="imu_link_joint" type="fixed">
+            <parent link="${parent}"/>
+            <child link="imu_link"/>
+            <axis xyz="0 0 0" />
+            <xacro:insert_block name="origin" />
+        </joint>
+        <gazebo reference="imu_link_joint">
+            <preserveFixedJoint>true</preserveFixedJoint>
+        </gazebo>
+        <link name="imu_link">
+            <visual>
+                <origin rpy="0 0 0" xyz="0 0 0"/>
+                <geometry>
+                    <box size="0.01 0.01 0.002"/>
+                </geometry>
+                <material name="white" />
+            </visual>
+            <inertial>
+                <origin xyz="0 0 0"/>
+                <mass value="0.04"/>
+                <inertia ixx="3.467e-7" ixy="0.0" ixz="0.0" iyy="3.467e-7" iyz="0.0" izz="6.667e-7"/>
+            </inertial>
+        </link>
+        <gazebo reference="imu_link">
+            <!-- this is expected to be reparented to pelvis with appropriate offset
+                 when imu_link is reduced by fixed joint reduction -->
+            <!-- todo: this is working with gazebo 1.4, need to write a unit test -->
+            <sensor name="imu_sensor" type="imu">
+                <always_on>true</always_on>
+                <update_rate>200.0</update_rate>
+                <plugin name="imu_sensor" filename="libgazebo_ros_imu_sensor.so">
+                    <ros>
+                        <!-- publish to /imu/data -->
+                        <namespace>/imu</namespace>
+                        <remapping>~/out:=data</remapping>
+                    </ros>
+                </plugin>
+                <imu>
+                    <initial_orientation_as_reference>true</initial_orientation_as_reference>
+                    <angular_velocity>
+                      <x>
+                        <noise type="gaussian">
+                          <mean>0.0</mean>
+                          <stddev>2e-4</stddev>
+                          <bias_mean>0.0000075</bias_mean>
+                          <bias_stddev>0.0000008</bias_stddev>
+                        </noise>
+                      </x>
+                      <y>
+                        <noise type="gaussian">
+                          <mean>0.0</mean>
+                          <stddev>2e-4</stddev>
+                          <bias_mean>0.0000075</bias_mean>
+                          <bias_stddev>0.0000008</bias_stddev>
+                        </noise>
+                      </y>
+                      <z>
+                        <noise type="gaussian">
+                          <mean>0.0</mean>
+                          <stddev>2e-4</stddev>
+                          <bias_mean>0.0000075</bias_mean>
+                          <bias_stddev>0.0000008</bias_stddev>
+                        </noise>
+                      </z>
+                    </angular_velocity>
+                    <linear_acceleration>
+                      <x>
+                        <noise type="gaussian">
+                          <mean>0.0</mean>
+                          <stddev>1.7e-2</stddev>
+                          <bias_mean>0.1</bias_mean>
+                          <bias_stddev>0.001</bias_stddev>
+                        </noise>
+                      </x>
+                      <y>
+                        <noise type="gaussian">
+                          <mean>0.0</mean>
+                          <stddev>1.7e-2</stddev>
+                          <bias_mean>0.1</bias_mean>
+                          <bias_stddev>0.001</bias_stddev>
+                        </noise>
+                      </y>
+                      <z>
+                        <noise type="gaussian">
+                          <mean>0.0</mean>
+                          <stddev>1.7e-2</stddev>
+                          <bias_mean>0.1</bias_mean>
+                          <bias_stddev>0.001</bias_stddev>
+                        </noise>
+                      </z>
+                    </linear_acceleration>
+
+                    <!-- not sure the imu tag is supported in ROS2 imu plugin -->
+                    <noise>
+                        <type>gaussian</type>
+                        <!-- Noise parameters from Boston Dynamics
+                             (http://gazebosim.org/wiki/Sensor_noise):
+                               rates (rad/s): mean=0, stddev=2e-4
+                               accels (m/s/s): mean=0, stddev=1.7e-2
+                               rate bias (rad/s): 5e-6 - 1e-5
+                               accel bias (m/s/s): 1e-1
+                             Experimentally, simulation provide rates with noise of
+                             about 1e-3 rad/s and accels with noise of about 1e-1 m/s/s.
+                             So we don't expect to see the noise unless number of inner iterations
+                             are increased.
+
+                             We will add bias.  In this model, bias is sampled once for rates
+                             and once for accels at startup; the sign (negative or positive)
+                             of each bias is then switched with equal probability.  Thereafter,
+                             the biases are fixed additive offsets.  We choose
+                             bias means and stddevs to produce biases close to the provided
+                             data. -->
+                        <!--
+                        <rate>
+                          <mean>0.0</mean>
+                          <stddev>2e-4</stddev>
+                          <bias_mean>0.0000075</bias_mean>
+                          <bias_stddev>0.0000008</bias_stddev>
+                        </rate>
+                        <accel>
+                          <mean>0.0</mean>
+                          <stddev>1.7e-2</stddev>
+                          <bias_mean>0.1</bias_mean>
+                          <bias_stddev>0.001</bias_stddev>
+                        </accel>
+                        -->
+                        <rate>
+                            <mean>0.0</mean>
+                            <stddev>0.0</stddev>
+                            <bias_mean>0.000000</bias_mean>
+                            <bias_stddev>0.0000008</bias_stddev>
+                        </rate>
+                        <accel>
+                            <mean>0.0</mean>
+                            <stddev>0.0</stddev>
+                            <bias_mean>0.0</bias_mean>
+                            <bias_stddev>0.000</bias_stddev>
+                        </accel>
+                    </noise>
+                </imu>
+            </sensor>
+        </gazebo>
+    </xacro:macro>
+
+    <xacro:macro
+        name="dummy_joint"
+        params="name parent child *axis *origin"
+    >
+        <joint name="${name}" type="revolute">
+            <parent link="${parent}" />
+            <child link="${child}" />
+            <xacro:insert_block name="origin" />
+            <xacro:insert_block name="axis" />
+            <limit
+                lower="-3.14"
+                upper="3.14"
+                effort="1000"
+                velocity="1000"
+                />
+            <dynamics
+                friction="9E-05" />
+        </joint>
+    </xacro:macro>
+
+    <xacro:macro
+        name="manipulator_joint"
+        params="name parent *origin R:=0 P:=0 Y:=0"
+    >
+        <xacro:property name="parentTemp" value="${parent}" />
+        <xacro:property name="originTemp" value="${True}" />
+        <xacro:if value='${R}'>
+            <link name="${name}_roll" />
+            <xacro:dummy_joint name="${parentTemp}_roll" parent="${parentTemp}" child="${name}_roll">
+                <axis xyz="1 0 0" />
+                <xacro:insert_block name="origin" />
+                <xacro:property name="originTemp" value="${False}" />
+            </xacro:dummy_joint>
+            <xacro:property name="parentTemp" value="${name}_roll" />
+        </xacro:if>
+        <xacro:if value='${P}'>
+            <link name="${name}_pitch" />
+            <xacro:dummy_joint name="${parentTemp}_pitch" parent="${parentTemp}" child="${name}_pitch">
+                <axis xyz="0 1 0" />
+                <xacro:if value="${not originTemp}">
+                    <origin xyz="0 0 0" rpy="0 0 0" />
+                </xacro:if>
+                <xacro:if value="${originTemp}">
+                    <xacro:insert_block name="origin" />
+                    <xacro:property name="originTemp" value="${False}" />
+                </xacro:if>
+            </xacro:dummy_joint>
+            <xacro:property name="parentTemp" value="${name}_pitch" />
+        </xacro:if>
+        <xacro:if value='${Y}'>
+            <link name="${name}_yaw" />
+            <xacro:dummy_joint name="${parentTemp}_yaw" parent="${parentTemp}" child="${name}_yaw">
+                <axis xyz="0 0 1" />
+                <xacro:if value="${not originTemp}">
+                    <origin xyz="0 0 0" rpy="0 0 0" />
+                </xacro:if>
+                <xacro:if value="${originTemp}">
+                    <xacro:insert_block name="origin" />
+                    <xacro:property name="originTemp" value="${False}" />
+                </xacro:if>
+            </xacro:dummy_joint>
+            <xacro:property name="parentTemp" value="${name}_yaw" />
+        </xacro:if>
+        <link name="${name}" />
+        <joint name="${parentTemp}_effector" type="fixed">
+            <axis xyz="0 0 0" />
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <parent link="${parentTemp}" />
+            <child link="${name}" />
+        </joint>
+
+    </xacro:macro>
+
+</lss>
+
