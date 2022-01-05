@@ -5,7 +5,7 @@
     <!-- torques in N-m, velocity in rads/sec for no-load -->
     <xacro:property name="ht1_max_torque_static" value="6.8439285" />
     <xacro:property name="ht1_max_torque_dynamic" value="6.5687857" />
-    <xacro:property name="ht1_max_velocity" value="0.58" />
+    <xacro:property name="ht1_max_velocity" value="6.283" />
 
     <!--
           todo: need to update these values to real ones
@@ -13,12 +13,12 @@
     <!-- torques in N-m, velocity in rads/sec for no-load -->
     <xacro:property name="st1_max_torque_static" value="6.8439285" />
     <xacro:property name="st1_max_torque_dynamic" value="6.5687857" />
-    <xacro:property name="st1_max_velocity" value="0.58" />
+    <xacro:property name="st1_max_velocity" value="6.283" />
 
     <!-- torques in N-m, velocity in rads/sec for no-load -->
     <xacro:property name="hs1_max_torque_static" value="6.8439285" />
     <xacro:property name="hs1_max_torque_dynamic" value="6.5687857" />
-    <xacro:property name="hs1_max_velocity" value="0.58" />
+    <xacro:property name="hs1_max_velocity" value="10.47" />
 
     <xacro:macro name="limits-HT1" params="lower_limit=-3.14 upper_limit=3.14">
         <limit
