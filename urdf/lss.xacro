@@ -11,8 +11,8 @@
           todo: need to update these values to real ones
     -->
     <!-- torques in N-m, velocity in rads/sec for no-load -->
-    <xacro:property name="st1_max_torque_static" value="6.8439285" />
-    <xacro:property name="st1_max_torque_dynamic" value="6.5687857" />
+    <xacro:property name="st1_max_torque_static" value="1.372931" />
+    <xacro:property name="st1_max_torque_dynamic" value="0.2745862" />
     <xacro:property name="st1_max_velocity" value="6.283" />
 
     <!-- torques in N-m, velocity in rads/sec for no-load -->
@@ -43,13 +43,13 @@
                 effort="${st1_max_torque_static}"
                 velocity="${st1_max_velocity}" />
         <safety_controller
-                k_position="0.3"
+                k_position="10"
                 k_velocity="100"
-                soft_lower_limit="-3.1"
-                soft_upper_limit="3.1" />
+                soft_lower_limit="-3.14"
+                soft_upper_limit="3.14" />
         <dynamics
-                damping="0.01"
-                friction="9E-05" />
+                damping="0.0"
+                friction="0.0" />
     </xacro:macro>
 
     <xacro:macro name="limits-HS1" params="lower_limit=-3.14 upper_limit=3.14">
@@ -119,13 +119,25 @@
     </xacro:macro>
 
     <xacro:macro name="gzjoint" params="ref preserve:=0">
+      <!-- no gz joint parameters for now -->
+    </xacro:macro>
+    <xacro:macro name="gzjoint-springy" params="ref preserve:=0">
         <gazebo reference="${ref}">
             <xacro:if value="${preserve}">
                 <preserveFixedJoint>true</preserveFixedJoint>
             </xacro:if>
             <implicitSpringDamper>true</implicitSpringDamper>
-            <springStiffness>100</springStiffness>
-            <springReference>0.01</springReference>
+            <!--
+               Spring stiffness coefficient
+               The stiffness coefficient causes a torque (force for prismatic
+               joints) to be applied based on the current joint position.
+               At the spring_reference position no torque is applied.
+               At any other position a torque is applied to the joint with a
+               direction towards the spring_reference position.
+               torque = spring_stiffness * (spring_reference - current_position)
+            -->
+            <springStiffness>0.15</springStiffness>
+            <springReference>0.5</springReference>
 
             <!-- untuned parameters -->
             <!--stopCfm>0.2</stopCfm>
@@ -221,17 +233,17 @@
         <link name="${name}-ST1">
             <inertial>
                 <origin
-                        xyz="0 0 0"
+                        xyz="-0.0187 0.0111 -0.000095622"
                         rpy="0 0 0" />
                 <mass
-                        value="0.355132365146695" />
+                        value="0.08678" />
                 <inertia
-                        ixx="0"
-                        ixy="0"
-                        ixz="0"
-                        iyy="0"
-                        iyz="0"
-                        izz="0" />
+                        ixx="0.000032833"
+                        ixy="-0.000018518"
+                        ixz="0.000000085540"
+                        iyy="0.000049952"
+                        iyz="-0.000000088136"
+                        izz="0.000074803" />
             </inertial>
             <visual>
                 <xacro:if value="${not reverse}">
