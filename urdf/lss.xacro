@@ -192,7 +192,7 @@
 
     <xacro:macro
         name="ST1"
-        params="name parent child offset=0 reverse=false mirror=false *origin"
+        params="name parent child offset:=0 reverse:=false mirror:=false min_position:=-3.14 max_position:=3.14 *origin"
         >
         <xacro:property name="mirror_rot" value="${0 if not mirror else 3.14158}" />
         <xacro:property name="mirror_trx" value="${0 if not mirror else -0.038}" />
@@ -210,6 +210,8 @@
                     name="${name}"
                     parent="${parent}"
                     child="${name}-ST1"
+                    min_position="${min_position}"
+                    max_position="${max_position}"
             >
                 <xacro:insert_block name="origin" />
                 <axis   xyz="1 0 0" />
@@ -270,6 +272,8 @@
                     name="${name}"
                     parent="${name}-ST1"
                     child="${child}"
+                    min_position="${min_position}"
+                    max_position="${max_position}"
             >
                 <origin xyz="-0.019 0.0255 0"
                         rpy="0 ${offset} 1.57078" />
