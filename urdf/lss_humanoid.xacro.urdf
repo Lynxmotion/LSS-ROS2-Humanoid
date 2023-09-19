@@ -4,6 +4,7 @@
   xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <xacro:arg name="target" default="rviz" />
+  <xacro:arg name="sim" default="ign" />
 
   <xacro:arg name="mu1" default="247.75" />
   <xacro:arg name="mu2" default="428.9" />

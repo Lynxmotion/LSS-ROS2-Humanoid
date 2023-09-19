@@ -330,13 +330,26 @@
             <sensor name="imu_sensor" type="imu">
                 <always_on>true</always_on>
                 <update_rate>200.0</update_rate>
-                <plugin name="imu_sensor" filename="libgazebo_ros_imu_sensor.so">
-                    <ros>
-                        <!-- publish to /imu/data -->
-                        <namespace>/imu</namespace>
-                        <remapping>~/out:=data</remapping>
-                    </ros>
-                </plugin>
+                <visualize>true</visualize>
+                <topic>imu</topic>
+
+                <xacro:if value="${sim == 'ign'}">
+                    <plugin filename="libignition-gazebo-imu-system.so"
+                        name="ignition::gazebo::systems::Imu">
+                        <ros>
+                            <namespace>/imu</namespace>
+                            <remapping>~/out:=data</remapping>
+                        </ros>
+                    </plugin>
+                </xacro:if>
+                <xacro:if value="${sim == 'gazebo'}">
+                    <plugin name="imu_sensor" filename="libgazebo_ros_imu_sensor.so">
+                        <ros>
+                            <namespace>/imu</namespace>
+                            <remapping>~/out:=data</remapping>
+                        </ros>
+                    </plugin>
+                </xacro:if>
                 <imu>
                     <initial_orientation_as_reference>true</initial_orientation_as_reference>
                     <angular_velocity>
