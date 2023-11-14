@@ -163,7 +163,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/Torso.dae" />
+          filename="model://lss_humanoid/Torso.dae" />
       </geometry>
       <material
         name="">
@@ -177,7 +177,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/collision/Torso.STL" />
+          filename="model://lss_humanoid/collision/Torso.STL" />
       </geometry>
     </collision>
   </link>
@@ -203,7 +203,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/Backpack.dae" />
+          filename="model://lss_humanoid/Backpack.dae" />
       </geometry>
       <material
         name="">
@@ -217,7 +217,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/collision/Backpack.STL" />
+          filename="model://lss_humanoid/collision/Backpack.STL" />
       </geometry>
     </collision>
   </link>
@@ -261,7 +261,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/LShoulder.STL" />
+          filename="model://lss_humanoid/LShoulder.STL" />
       </geometry>
       <material
         name="">
@@ -275,7 +275,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/collision/LShoulder.STL" />
+          filename="model://lss_humanoid/collision/LShoulder.STL" />
       </geometry>
     </collision>
   </link>
@@ -306,7 +306,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/LHumerus.dae" />
+          filename="model://lss_humanoid/LHumerus.dae" />
       </geometry>
       <material
         name="">
@@ -320,7 +320,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/collision/LHumerus.STL" />
+          filename="model://lss_humanoid/collision/LHumerus.STL" />
       </geometry>
     </collision>
   </link>
@@ -352,7 +352,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/LRadius.STL" />
+          filename="model://lss_humanoid/LRadius.STL" />
       </geometry>
       <material
         name="">
@@ -366,7 +366,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/collision/LRadius.STL" />
+          filename="model://lss_humanoid/collision/LRadius.STL" />
       </geometry>
     </collision>
   </link>
@@ -398,7 +398,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/LHipYaw.STL" />
+          filename="model://lss_humanoid/LHipYaw.STL" />
       </geometry>
       <material
         name="">
@@ -412,7 +412,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/collision/LHipYaw.STL" />
+          filename="model://lss_humanoid/collision/LHipYaw.STL" />
       </geometry>
     </collision>
   </link>
@@ -444,7 +444,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/LHipRoll.dae" />
+          filename="model://lss_humanoid/LHipRoll.dae" />
       </geometry>
       <material
         name="">
@@ -458,7 +458,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/collision/LHipRoll.STL" />
+          filename="model://lss_humanoid/collision/LHipRoll.STL" />
       </geometry>
     </collision>
   </link>
@@ -490,7 +490,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/LHipPitch.dae" />
+          filename="model://lss_humanoid/LHipPitch.dae" />
       </geometry>
       <material
         name="">
@@ -504,7 +504,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/collision/LHipPitch.STL" />
+          filename="model://lss_humanoid/collision/LHipPitch.STL" />
       </geometry>
     </collision>
   </link>
@@ -536,7 +536,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/LKnee.STL" />
+          filename="model://lss_humanoid/LKnee.STL" />
       </geometry>
       <material
         name="">
@@ -550,7 +550,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/collision/LKnee.STL" />
+          filename="model://lss_humanoid/collision/LKnee.STL" />
       </geometry>
     </collision>
   </link>
@@ -582,7 +582,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/LFootPitch.dae" />
+          filename="model://lss_humanoid/LFootPitch.dae" />
       </geometry>
       <material
         name="">
@@ -596,7 +596,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/collision/LFootPitch.STL" />
+          filename="model://lss_humanoid/collision/LFootPitch.STL" />
       </geometry>
     </collision>
   </link>
@@ -628,7 +628,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/LFootRoll.STL" />
+          filename="model://lss_humanoid/LFootRoll.STL" />
       </geometry>
       <material
         name="">
@@ -642,7 +642,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/collision/LFootRoll.STL" />
+          filename="model://lss_humanoid/collision/LFootRoll.STL" />
       </geometry>
     </collision>
   </link>
@@ -677,7 +677,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/LShoulder.STL" />
+          filename="model://lss_humanoid/LShoulder.STL" />
       </geometry>
       <material
         name="">
@@ -691,7 +691,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/collision/LShoulder.STL" />
+          filename="model://lss_humanoid/collision/LShoulder.STL" />
       </geometry>
     </collision>
   </link>
@@ -723,7 +723,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/LHumerus.dae" />
+          filename="model://lss_humanoid/LHumerus.dae" />
       </geometry>
       <material
         name="">
@@ -737,7 +737,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/collision/LHumerus.STL" />
+          filename="model://lss_humanoid/collision/LHumerus.STL" />
       </geometry>
     </collision>
   </link>
@@ -769,7 +769,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/LRadius.STL" />
+          filename="model://lss_humanoid/LRadius.STL" />
       </geometry>
       <material
         name="">
@@ -783,7 +783,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/collision/LRadius.STL" />
+          filename="model://lss_humanoid/collision/LRadius.STL" />
       </geometry>
     </collision>
   </link>
@@ -817,7 +817,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/LHipYaw.STL" />
+          filename="model://lss_humanoid/LHipYaw.STL" />
       </geometry>
       <material
         name="">
@@ -831,7 +831,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/collision/LHipYaw.STL" />
+          filename="model://lss_humanoid/collision/LHipYaw.STL" />
       </geometry>
     </collision>
   </link>
@@ -863,7 +863,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/LHipRoll.dae" />
+          filename="model://lss_humanoid/LHipRoll.dae" />
       </geometry>
       <material
         name="">
@@ -877,7 +877,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/collision/LHipRoll.STL" />
+          filename="model://lss_humanoid/collision/LHipRoll.STL" />
       </geometry>
     </collision>
   </link>
@@ -909,7 +909,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/LHipPitch.dae" />
+          filename="model://lss_humanoid/LHipPitch.dae" />
       </geometry>
       <material
         name="">
@@ -923,7 +923,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/collision/LHipPitch.STL" />
+          filename="model://lss_humanoid/collision/LHipPitch.STL" />
       </geometry>
     </collision>
   </link>
@@ -955,7 +955,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/LKnee.STL" />
+          filename="model://lss_humanoid/LKnee.STL" />
       </geometry>
       <material
         name="">
@@ -969,7 +969,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/collision/LKnee.STL" />
+          filename="model://lss_humanoid/collision/LKnee.STL" />
       </geometry>
     </collision>
   </link>
@@ -1001,7 +1001,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/LFootPitch.dae" />
+          filename="model://lss_humanoid/LFootPitch.dae" />
       </geometry>
       <material
         name="">
@@ -1015,7 +1015,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/collision/LFootPitch.STL" />
+          filename="model://lss_humanoid/collision/LFootPitch.STL" />
       </geometry>
     </collision>
   </link>
@@ -1047,7 +1047,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/LFootRoll.STL" />
+          filename="model://lss_humanoid/LFootRoll.STL" />
       </geometry>
       <material
         name="">
@@ -1061,7 +1061,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/collision/LFootRoll.STL" />
+          filename="model://lss_humanoid/collision/LFootRoll.STL" />
       </geometry>
     </collision>
   </link>
@@ -1096,7 +1096,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/LSole.STL" />
+          filename="model://lss_humanoid/LSole.STL" />
       </geometry>
       <material
         name="">
@@ -1149,7 +1149,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lss_humanoid/meshes/LSole.STL" />
+          filename="model://lss_humanoid/LSole.STL" />
       </geometry>
       <material
         name="">

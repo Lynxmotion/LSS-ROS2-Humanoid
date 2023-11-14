@@ -257,7 +257,7 @@
                             rpy="3.14159 ${mirror_rot} 0" />
                 </xacro:if>
                 <geometry>
-                    <mesh filename="package://lss_hexapod/meshes/LSS-Servo-Aluminum.dae" />
+                    <mesh filename="model://lss_humanoid/LSS-Servo-Aluminum.dae" />
                 </geometry>
                 <material name="white" />
             </visual>
@@ -266,7 +266,7 @@
                         xyz="0 0 0"
                         rpy="0 0 0" />
                 <geometry>
-                    <mesh filename="package://lss_hexapod/meshes/LSS-Servo-Aluminum.dae" />
+                    <mesh filename="model://lss_humanoid/LSS-Servo-Aluminum.dae" />
                 </geometry>
             </collision>
         </link>
