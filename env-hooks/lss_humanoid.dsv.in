@@ -1,4 +1,14 @@
-prepend-non-duplicate;GAZEBO_MODEL_PATH;share/@PROJECT_NAME@/meshes
+prepend-non-duplicate;IGN_GAZEBO_RESOURCE_PATH;share/@PROJECT_NAME@/meshes
+prepend-non-duplicate;GZ_SIM_RESOURCE_PATH;share/@PROJECT_NAME@/meshes
+
+## Between Gazebo classic, Ignition and now renaming Ignition to Gazebo the env variable
+## naming convention is a dog's breakfast. I see old documentation for these prefixes:
+# Classic:  GAZEBO_
+# Ignition up to v6.1?: IGN_GAZEBO_
+# Ignition >6.2: GZ_SIM_
+
+## Other examples
+#prepend-non-duplicate;IGN_FILE_PATH;share/@PROJECT_NAME@/meshes
 #prepend-non-duplicate;GAZEBO_RESOURCE_PATH;share/@PROJECT_NAME@/worlds
 #prepend-non-duplicate;GAZEBO_RESOURCE_PATH;share/@PROJECT_NAME@/media
 #prepend-non-duplicate;GAZEBO_PLUGIN_PATH;share/@PROJECT_NAME@/plugins
