@@ -264,12 +264,21 @@
                 </geometry>
                 <material name="white" />
             </visual>
-            <collision>
-                <origin
-                        xyz="0 0 0"
-                        rpy="0 0 0" />
-                <geometry>
-                    <mesh filename="model://lss_humanoid/LSS-Servo-Aluminum.dae" />
+	    <collision>
+                <xacro:if value="${not reverse}">
+                    <origin
+                        xyz="${-0.01915} 0.0125 0"
+                        rpy="0 ${mirror_rot} 0" />
+                </xacro:if>
+                <xacro:if value="${reverse}">
+                    <origin
+                            xyz="${-0.01915} 0.0125 0"
+                            rpy="3.14159 ${mirror_rot} 0" />
+                </xacro:if>
+		<geometry>
+			<!--box size="0.0383 0.051 0.025"/-->
+			<mesh filename="model://lss_humanoid/collision/LSS-Servo-Aluminum.stl" />
+			<!--mesh filename="model://lss_humanoid/LSS-Servo-Aluminum.dae" /-->
                 </geometry>
             </collision>
         </link>
